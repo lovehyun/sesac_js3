@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .styled-ul {
+            list-style-type: square;
+        }
+        .styled-ol {
+            list-style-type: upper-roman;
+        }
+        .custom-ul {
+            list-style-type: none;
+        }
+        .custom-ul li::before {
+            content: "✔";
+            color: green;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS 리스트 속성들 다양한 실험</h1>
+    <h2>Unordered List (순서에 상관없는 = 불릿)</h2>
+    <ul class="styled-ul">
+        <li>첫번째 항목</li>
+        <li>두번째 항목</li>
+        <li>세번째 항목</li>
+    </ul>
+    <h2>Ordered List (순서에 상관있는 = 숫자)</h2>
+    <ol class="styled-ol">
+        <li>첫번째 항목</li>
+        <li>두번째 항목</li>
+        <li>세번째 항목</li>
+    </ol>
+    <h2>Custom List (내가 정의한 부호)</h2>
+    <ul class="custom-ul">
+        <li>첫번째 항목</li>
+        <li>두번째 항목</li>
+        <li>세번째 항목</li>
+    </ul>
+</body>
+</html>
