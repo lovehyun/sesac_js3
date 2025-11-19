@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <style>
+        #title {
+            color: red;
+        }
+    </style> -->
+</head>
+<body>
+    <h1 id="title">헬로우 DOM 버튼</h1>
+    <button onclick="changeColor()">색상바꾸기</button>
+
+    <script>
+        function changeColor() {
+            // console.log("색상바꾸기");
+            // let heading = document.getElementById('title'); // ' 와 "  무방한데, 내 코드 내에서 일관성 지키기
+            let heading = document.getElementById("title");
+            // console.log(heading);
+
+            // 어... 색깔을 바꾸고 싶은데.. 배운적이 없네;;;
+            // CSS를 떠올려보고 유추... (물론 찍어서 맞추라는 이야기는 아님)
+            heading.style.color = 'red';
+
+            // 그럼 배경색을 바꾸려면?
+            heading.style.backgroundColor = 'yellow';
+
+            heading.style.width = '300px';
+        }
+    </script>
+</body>
+</html>

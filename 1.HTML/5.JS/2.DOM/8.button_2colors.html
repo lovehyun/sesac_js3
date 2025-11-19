@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        h1 {
+            color: green;
+            background-color: yellowgreen;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="title">헬로우 DOM 버튼</h1>
+    <button onclick="changeColor1()">색상바꾸기1</button>
+    <button onclick="changeColor2()">색상바꾸기2</button>
+    <button onclick="changeColor4()">색상초기화</button>
+
+    <script>
+        // 함수는 각자의 목적에 맞게 간결하게 짠다.
+        // 그리고 함수명에 1/2/3/4/ 붙이기 시작하면... 다음해 연봉협상할때, 나가라고 할거다...
+        // 의미 있는 함수명을 붙인다...
+        // changeColor1 => changeRedColor()
+        // changeColor2 => changeBlueColor()
+        // changeColor3 => resetColor()
+
+        function changeColor1() {
+            let heading = document.getElementById("title");
+            heading.style.color = 'red';
+            heading.style.backgroundColor = 'yellow';
+            heading.style.width = '300px';
+        }
+        function changeColor2() {
+            let heading = document.getElementById("title");
+            heading.style.color = 'blue';
+            heading.style.backgroundColor = '#30eeff'; // 또는 'skyblue'
+            heading.style.width = '300px';
+        }
+        function changeColor3() {  // 나쁜 GPT 코드
+            let heading = document.getElementById("title");
+            heading.style.color = ''; // 기존에 설정한 값들을 지운다
+            heading.style.backgroundColor = '';
+            heading.style.width = '';
+        }
+        function changeColor4() { // 야단쳐서 두들겨 패면 답변 잘 해줌
+            let heading = document.getElementById("title");
+            heading.removeAttribute("style");  // inline style 전체 제거!
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>헬로우 DOM</h1>
+    <button onclick="sayHello()">Hello</button>
+    <div id="result"></div>
+
+    <script>
+        function sayHello() {
+            // let resultDiv = document.getElementById("result");
+            // resultDiv.innerHTML = "<B>say 헬로우...</B>";
+
+            // 이걸 한줄로 표현하면, 아래와 같음.. 굳이 변수에 안 넣어도 무방하기는 함.
+            document.getElementById("result").innerHTML = "<B>say 헬로우...</B>";
+
+            // 아래처럼 된다고 절대 하지 말것.. 표준이 아님.. 특정 브라우저에서만 동작함..
+            // result.innerHTML = "<B>say 헬로우...</B>";
+        }
+    </script>
+</body>
+</html>

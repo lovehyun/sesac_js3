@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>헬로우 DOM</h1>
+    <button onclick="sayHello()">Hello</button>
+    <div id="result"><!--여기가 쓰여질 빈공간--></div>
+    <!-- <div id="result"><B>say 헬로우</B></div> -->
+    <!-- <B>say 헬로우</B> -->
+
+    <script>
+        function sayHello() {
+            let resultDiv = document.getElementById("result");
+            // console.log(resultDiv);
+            // resultDiv.textContent = "<B>say 헬로우...</B>";
+            // resultDiv.innerHTML = "<B>say 헬로우...</B>";
+            resultDiv.outerHTML = "<B>say 헬로우...</B>";
+            
+            // console.log("say 헬로우...");
+            // 그래서 결론적으로, document에 쓰기 위한 다~~~양한 함수들이 있음
+            // .textContent = 내가 쓰고 싶은 글을 있는 그대~~로 표현 (즉 태그 파싱 안함)
+            // .innerHTML = 내가 쓰고 싶은 글을 HTML로 파싱함
+            // .outerHTML = 그냥 몰라도 됨. 안씀. 실제로는 내가 가져온 HTML 요소를 대체함 (지우고 새로 생성함)
+        }
+    </script>
+</body>
+</html>
