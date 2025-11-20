@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>콘솔에 삼각형 그리기</h1>
+    <script>
+        console.log("=== 삼각형 그리기 ===");
+        console.log("1. 왼쪽 삼각형 그리기");
+        for (let i = 1; i <= 5; i++) {
+            // console.log("내가 원하는건 *의 갯수임: ", i);
+            // for (let num_of_start = 1; num_of_stars <= i; num_of_starts++) {
+            let stars = ""
+            for (let n = 1; n <= i; n++) { // 한줄의 별의 갯수를 정의한다.
+                stars += "*"
+            }
+            console.log(stars);
+        }
+
+        console.log("1. 왼쪽 삼각형 그리기 - 개선된 코드");
+        for (let i = 1; i <= 5; i++) {
+            console.log("*".repeat(i));
+        }
+
+        console.log("2. 왼쪽 역삼각형 그리기");
+        for (let i = 5; i >= 1; i--) {
+            // console.log("넌 왜 아무것도 안나오니???");
+            // console.log("내가 원하는건 *의 갯수임: ", i);
+            // for (let num_of_start = 1; num_of_stars <= i; num_of_starts++) {
+            let stars = ""
+            for (let n = 1; n <= i; n++) { // 한줄의 별의 갯수를 정의한다.
+                stars += "*"
+            }
+            console.log(stars);
+        }
+
+        console.log("2. 왼쪽 역삼각형 그리기 - 개선된 코드");
+        for (let i = 5; i >= 1; i--) {
+            console.log("*".repeat(i));
+        }
+
+        console.log("3. 오른쪽 삼각형 그리기");
+        for (let i = 1; i <= 5; i++) {
+            // console.log("넌 또 왜 안나오니??");
+            // 여기서 스페이스를 어떻게 채울지만 고민할것
+            let spaces = ""
+            for (let n = 5; n >= i; n--) { // 4, 3, 2, 1, 0 을 어떻게 만들거냐에 대한 고민.. 방법은 매우 다양함..
+                spaces += " "
+            }
+
+            // 아래는 일단 무시
+            let stars = ""
+            for (let n = 1; n <= i; n++) { // 한줄의 별의 갯수를 정의한다.
+                stars += "*"
+            }
+            console.log(spaces + stars);
+        }
+
+        console.log("3. 오른쪽 삼각형 그리기 - 개선된 코드");
+        for (let i = 1; i <= 5; i++) {
+            console.log(" ".repeat(5-i) + "*".repeat(i));
+        }
+
+        console.log("4. 오른쪽 역삼각형 그리기");
+        // 이거까지는 안풀어줄거지롱~~
+        // for 루프 반복문을 학습해 보는 목적이 크니, repeat만 알지 말고,
+        // 꼭 for 구문을 내가 원하는대로 제어할줄 알아야 합니다.
+        // for (초기값, 반복조건, 변수증감처리)
+
+        console.log("4. 오른쪽 역삼각형 그리기 - 개선된 코드");
+        // 꼭 직접 완성해 보시오...
+    </script>
+</body>
+</html>

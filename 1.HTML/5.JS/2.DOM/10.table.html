@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+            border: 1px solid black;
+            border-collapse: collapse; /* 셀 간의 경계를 무너트림 */
+        }
+        td {
+            padding: 10px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>테이블을 DOM 으로 제어해보기</h1>
+    <table>
+        <tr>
+            <td>셀 1</td>
+            <td>셀 2</td>
+            <td>셀 3</td>
+        </tr>
+        <tr>
+            <td>셀 4</td>
+            <td>셀 5</td>
+            <td>셀 6</td>
+        </tr>
+        <tr>
+            <td>셀 7</td>
+            <td>셀 8</td>
+            <td>셀 9</td>
+        </tr>
+        <tr>
+            <td>셀 10</td>
+            <td>셀 11</td>
+            <td>셀 12</td>
+        </tr>
+        
+    </table>
+
+    <button onclick="changeCellColor()">셀 색상 모두 변경 (파랑)</button>
+    <button onclick="changeOddCellColor()">홀수셀 색상 모두 변경 (초록)</button>
+    <button onclick="changeEvenCellColor2()">짝수셀 색상 모두 변경 (주황)</button>
+    <script>
+        function changeCellColor() {
+            // let cells = document.getElementById("cellId");
+            let cells = document.getElementsByTagName("td");
+            // 모든 td들이 다 온다.. 그럼 이건 어디에서 담겨서, 어떤 자료구조로 올것인가???
+            // 쉬운말로는 리스트, 전문 개발용어로는 이걸 배열(Array) 이라고 부른다.
+            console.log(cells);
+
+            // 지금 담겨 있는건 cells = [td, td, td, ...]
+            // cells.style.backgroundColor = "lightblue";
+
+            // [td, td, td, ...].style.backgroundColor = "lightblue";
+
+            // 그래서, 이렇게 하면 적용을 못하니?? 개별 요소(element) 하나하나에 따로 적용해야 함...
+            // 그럼, 개별 요소를 가져오는 방법은?? 인덱스...
+            cells[0].style.backgroundColor = "lightblue";
+            cells[1].style.backgroundColor = "lightblue";
+
+            // 미션1. 반복문으로 이걸 구현한다..
+            for (let i = 0; i < 9; i++) { // 하드코딩 노노.. 늘어나면 또 버그남..
+                cells[i].style.backgroundColor = "lightblue";
+            }
+            
+            for (let i = 0; i < cells.length; i++) { // 셀의 갯수만큼..
+                cells[i].style.backgroundColor = "lightblue";
+            }
+        }
+
+        // 이렇게 한글 변수 한글 함수, 한명 병기 다 동작은 하지만... 매~~~우 나쁜 코딩임. 코딩의 기본은 모든걸 다 영어로 한다.
+        function change홀수CellColor() {
+            console.log("홀수셀 색상 바꾸기")
+        }
+        function changeOddCellColor() {
+            // console.log("홀수셀 색상 바꾸기")
+            let cells = document.getElementsByTagName("td");
+            for (let i = 0; i < cells.length; i++) {
+                if (i % 2 == 0) { // 2로 나누어 나머지가 0인경우
+                    cells[i].style.backgroundColor = 'lightgreen';
+                }
+
+                // 위에서, 로직과 셀 번호와, 비즈니스 로직을 잘~~ 생각해볼것...
+                // 홀수를 바꾸라고 했고, 하필 그게 짝수 셀에 있고, 그 짝수 셀에 있는 글자가 홀수 글자다!~!!
+                // 매우 헷갈릴수 있는 상황임...
+            }
+        }
+        
+        function change짝수CellColor() {
+            console.log("짝수셀 색상 바꾸기")
+        }
+        function changeEvenCellColor() {
+            // console.log("짝수셀 색상 바꾸기")
+            let cells = document.getElementsByTagName("td");
+            for (let i = 0; i < cells.length; i++) {
+                if (i % 2 == 1) { // 2로 나누어 나머지가 1인경우
+                    cells[i].style.backgroundColor = 'orange';
+                }
+            }
+        }
+        function changeEvenCellColor2() {
+            console.log("짝수셀 두번째 방법으로 색상 바꾸기")
+            let cells = document.getElementsByTagName("td");
+            for (let i = 1; i < cells.length; i += 2) {
+                cells[i].style.backgroundColor = 'orange';
+            }
+        }
+        // 그래서 방법은 매~~우 다양하게 구현 될 수 있음..
+        // 정답은 없음...
+    </script>
+</body>
+</html>
