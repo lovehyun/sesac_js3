@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>카운트다운 타이머</h1>
+    <input type="number" id="timeInput" placeholder="초 입력">
+    <button onclick="startTimer()">시작</button>
+    <div id="display"></div>
+
+    <script>
+        function startTimer() {
+            let time = document.getElementById("timeInput").value;
+            const display = document.getElementById("display");
+
+            // 새로운 DOM 요소를 추가하려면?
+            const timerElement = document.createElement('p');
+            timerElement.textContent = "새로운 돔이에요";
+            display.appendChild(timerElement);
+
+            // 어떻게 계산을 더할꺼냐? 추가 고민.. setInterval
+            const timerId = setInterval(() => {
+                time = time - 1;
+                // console.log("시간반복: ", time);
+                timerElement.textContent = `${time} 초 남았습니다.`;
+                if (time <= 0) {
+                    clearInterval(timerId);
+                    timerElement.textContent = `집에갈 시간입니다.`;
+                }
+            }, 1000);
+
+        }
+    </script>
+</body>
+</html>

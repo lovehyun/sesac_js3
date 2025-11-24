@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <H1>숫자 맞추기 게임 (1~100 을 찍어서 맞추시오)</H1>
+    <input id="guessInput" type="number">
+    <button onclick="checkGuess()" id="trial">시도</button>
+    <div id="result"></div>
+    <script>
+        const myNumber = Math.floor(Math.random() * 100) + 1;
+        console.log(myNumber);
+
+        function checkGuess() {
+            const userInput = document.getElementById("guessInput").value;
+            const result = document.getElementById("result");
+            console.log(userInput);
+            if (myNumber == userInput) {
+                console.log("맞음!!");
+                result.innerHTML = "<B>맞음</B>";
+            } else if (userInput > myNumber) {
+                console.log("숫자가 큽니다");
+                result.innerHTML = "<B>숫자가 큽니다</B>";
+            } else if (userInput < myNumber) {
+                console.log("숫자가 작아요");
+                result.innerHTML = "<B>숫자가 작아요</B>";
+            }
+        }
+    </script>
+</body>
+</html>
