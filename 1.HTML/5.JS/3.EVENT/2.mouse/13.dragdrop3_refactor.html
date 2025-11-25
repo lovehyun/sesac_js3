@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #dragItem {
+            width: 100px;
+            height: 100px;
+            background-color: #ffcc00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .placeholder {
+            position: absolute;
+            color: #999;
+        }
+
+        .container {
+            width: 200px;
+            height: 200px;
+            background-color: #f0f0f0;
+            border: 2px dashed #cccccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>드래그 앤 드롭2</h1>
+
+    <div id="startZone" class="container">
+        <span class="placeholder" id="startPlaceholder">Drop here</span>
+        <div id="dragItem" draggable="true">드래그 미</div>
+    </div>
+
+    <div id="dropZone" class="container">
+        <span class="placeholder" id="dropPlaceholder">Drop here</span>
+    </div>
+
+    <script>
+        const dragItem = document.getElementById('dragItem');
+        const dropZone = document.getElementById('dropZone');
+        const startZone = document.getElementById('startZone');
+
+        dragItem.addEventListener('dragstart', () => {
+            console.log("드래그 시작");
+        });
+
+        // 리스트를 만들고, forEach 로 순회하면서, 해당 멤버를 하나씩 가져와서 뭔가를 적용한다.
+        
+        [dropZone, startZone].forEach(zone => {
+            zone.addEventListener('dragover', (ev) => {
+                ev.preventDefault();
+                console.log("뭔가 오기 시작함")
+            });
+        });
+
+        [dropZone, startZone].forEach(zone => {
+            zone.addEventListener('drop', (ev) => {
+                ev.preventDefault();
+                console.log("여기에 놨음");
+                zone.appendChild(dragItem);
+            });
+        });
+    </script>
+</body>
+</html>
