@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #todo-list > li {
+            cursor: pointer;
+        }
+        #todo-list > li.completed {
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body>
+    <h1>투두리스트</h1>
+    <input type="text" id="new-todo" placeholder="할일을 입력하시오">
+    <button id="add-todo">입력</button>
+    <!-- 할일들을 아래에 표시할 예정 -->
+    <ul id="todo-list"></ul>
+
+    <script>
+        // 단문을 짧게 작성
+
+        // 1. 버튼 가져온다.
+        const addBtn = document.getElementById('add-todo');
+        // 2. 버튼 클릭 동작시킨다.
+        addBtn.addEventListener('click', () => {
+            // 3. 입력 항목항목 가져온다.
+            const newTodo = document.getElementById('new-todo');
+
+            // 기능개선1. 빈값의 입력을 막는다.
+            if (newTodo.value.trim() == '') {
+                console.log('빈값이라서 안넣어줄것임');
+                return;
+            }
+            
+            // 4. 새로운 li를 만들다.
+            const new_li = document.createElement('li');
+            // new_li.textContent = newTodo.value;
+            // 기능B. 삭제 버튼 추가
+            // 기능C. 나중에 수정도 구현하기
+            new_li.innerHTML = `${newTodo.value} <button class="modify-btn">수정</button><button class="delete-btn">삭제</button>`;
+            
+            const deleteBtn = new_li.querySelector('.delete-btn');
+            deleteBtn.addEventListener('click', () => {
+                new_li.remove(); // li 요소 삭제
+            })
+
+            // 기능A. 클릭시 완성 표시한다.
+            new_li.addEventListener('click', () => {
+                // 방법1. 수동으로 내가 다 구현한다. if add/remove
+                /*
+                if (new_li.classList.contains('completed')) {
+                    new_li.classList.remove('completed');
+                } else {
+                    new_li.classList.add('completed');
+                }
+                */
+                // 방법2. toggle 이라는 스마트한 함수를 쓴다.
+                new_li.classList.toggle('completed');
+            });
+
+            // 5. ul에 추가한다.
+            const todoList = document.getElementById('todo-list');
+            todoList.appendChild(new_li);
+
+            // 기능개선2. 입력을 성공했으면 입력칸을 지운다.
+            newTodo.value = '';
+        });
+
+        // 기능개선3. 엔터쳐서 입력한다.
+        const newTodo = document.getElementById('new-todo');
+        newTodo.addEventListener('keydown', (event) => {
+            if (event.key == 'Enter') {
+                addBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>

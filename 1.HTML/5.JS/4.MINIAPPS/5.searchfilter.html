@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>동적 검색 필터</h1>
+    <input type="text" id="searchInput" placeholder="검색어를 입력하시오...">
+    <ul id="itemsList">
+        <li>사과</li>
+        <li>포도</li>
+        <li>바나나</li>
+        <li>오렌지</li>
+        <li>파인애플</li>
+        <li>키위</li>
+        <li>망고</li>
+        <li>딸기</li>
+        <li>블루베리</li>
+        <li>라즈베리</li>
+        <li>크랜베리</li>
+        <li>체리</li>
+        <li>자두</li>
+        <li>복숭아</li>
+        <li>플럼</li>
+        <li>자몽</li>
+        <li>레몬</li>
+        <li>라임</li>
+        <li>유자</li>
+        <li>한라봉</li>
+        <li>천혜향</li>
+        <li>레드향</li>
+        <li>참외</li>
+        <li>수박</li>
+        <li>멜론</li>
+        <li>파파야</li>
+        <li>아보카도</li>
+        <li>코코넛</li>
+        <li>용과</li>
+        <li>두리안</li>
+        <li>리치</li>
+        <li>망고스틴</li>
+        <li>패션프루트</li>
+        <li>구아바</li>
+        <li>무화과</li>
+        <li>석류</li>
+        <li>살구</li>
+        <li>대추야자</li>
+        <li>산딸기</li>
+        <li>거봉</li>
+        <li>청포도</li>
+        <li>적포도</li>
+        <li>하귤</li>
+        <li>네이블오렌지</li>
+        <li>카라카라오렌지</li>
+        <li>금귤</li>
+        <li>탐라감귤</li>
+        <li>천도복숭아</li>
+        <li>자두복숭아</li>
+        <li>황도복숭아</li>
+        <li>홍옥사과</li>
+        <li>후지사과</li>
+        <li>그라니스미스</li>
+        <li>골든딜리셔스</li>
+        <li>브램리사과</li>
+        <li>칸탈루프멜론</li>
+        <li>허니듀멜론</li>
+        <li>갈리아멜론</li>
+        <li>슈가베이비수박</li>
+        <li>씨없는수박</li>
+        <li>참다래</li>
+        <li>레드키위</li>
+        <li>골드키위</li>
+        <li>애플망고</li>
+        <li>페르시몬</li>
+        <li>스위티</li>
+        <li>포멜로</li>
+        <li>스타후르츠</li>
+        <li>람부탄</li>
+        <li>바바코</li>
+        <li>사워솝</li>
+        <li>나시배</li>
+        <li>애플베리</li>
+        <li>보이즌베리</li>
+        <li>기고마</li>
+        <li>페이조아</li>
+        <li>마키베리</li>
+        <li>아사이베리</li>
+        <li>구스베리</li>
+        <li>블랙커런트</li>
+        <li>레드커런트</li>
+        <li>화이트커런트</li>
+        <li>산수유열매</li>
+        <li>으름덩굴열매</li>
+        <li>머루포도</li>
+        <li>다래열매</li>
+        <li>청시다래</li>
+        <li>인디언무화과</li>
+        <li>손가락라임</li>
+        <li>칠레앙두로</li>
+        <li>루바브줄기</li>
+        <li>노니열매</li>
+        <li>칡넝쿨열매</li>
+        <li>산딸기품종A</li>
+        <li>산딸기품종B</li>
+        <li>오디열매</li>
+        <li>뱀딸기</li>
+        <li>비파열매</li>
+        <li>여주열매</li>
+        <li>아로니아</li>
+    </ul>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        // li를 가져오고 싶은데, id가 없음.. 그러면 ul을 가져와서, 그 ul아래에 있는 li들을 가져와야함.
+        const itemsList = document.getElementById('itemsList');
+        const items = itemsList.getElementsByTagName('li');
+
+        const items2 = document.querySelectorAll('#itemsList > li');
+        console.log(items);
+        console.log(items2);
+
+        searchInput.addEventListener('input', () => { // keydown, keyup, keypress, input
+            const filter = searchInput.value;
+
+            // 방법1. for
+            // for (let i = 0; i < items.length; i++) {
+            //     const item = items[i];
+            //     const text = item.textContent || item.innerText;
+            //     if (text.includes(filter)) {
+            //         item.style.display = '';
+            //     } else {
+            //         item.style.display = 'none';
+            //     }
+            // }
+
+            // 방법2. forEach - NodeList는 그냥 가능.
+            // HTMLCollection 은 Array 로 변환해야함.
+            // items2.forEach(item => {
+            Array.from(items).forEach(item => {
+                const text = item.textContent;
+                if (text.includes(filter)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            })
+        });
+    </script>
+</body>
+</html>
+
