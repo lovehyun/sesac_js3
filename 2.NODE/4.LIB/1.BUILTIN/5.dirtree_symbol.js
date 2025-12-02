@@ -1,0 +1,7 @@
+console.log('├── 여기는 이어지는곳')
+console.log('├── 여기는 이어지는곳')
+console.log('├── 여기는 이어지는곳')
+console.log('│   ├── 여기는 이어지는곳')
+console.log('│   └── 여기는파일명찍을곳')
+console.log('├── 여기는 이어지는곳')
+console.log('└── 여기는파일명찍을곳')
