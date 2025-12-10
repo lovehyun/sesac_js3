@@ -11,11 +11,14 @@
     <div id="result"></div>
 
     <script>
+        console.log("클릭도하기전");
         document.getElementById('loadContent').addEventListener('click', () => {
             // console.log('버튼 클릭!');
             // 착한아저씨 사이트에서 100개의 글중에 1번 글을 가져온다.
+            console.log("요청 시작함");
             fetch('https://jsonplaceholder.typicode.com/posts/1')
                 .then(response => {
+                    console.log("응답왔음");
                     if (!response.ok) {
                         throw new Error('네트워크 오류')
                     }
@@ -29,6 +32,7 @@
                 .catch(error => {
                     alert('오류!!');
                 })
+            console.log("요청 끝났음");
         });
     </script>
 </body>

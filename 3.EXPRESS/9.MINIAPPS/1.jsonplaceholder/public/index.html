@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>아직은 빈 껍데기</h1>
+    <label>
+        <input type="number" id="postId">
+    </label>
+    <button id="loadButton">불러오기</button>
+    <button id="deleteButton">삭제하기</button>
+    <div id="result"></div>
+    <script>
+        const loadButton = document.getElementById('loadButton');
+        const deleteButton = document.getElementById('deleteButton');
+
+        function originalStyle() {
+            loadButton.addEventListener('click', () => {
+                // console.log('버튼 클릭됨');
+                // fetch('http://localhost:3000/api/posts'); // 내가 어디든지간에, 지정된 곳에 물어보겠다.
+                // fetch('http://127.0.0.1:3000/api/posts'); // 내가 어디든지간에, 지정된 곳에 물어보겠다.
+                fetch('/api/posts') // 내가 접속한 사이트에서, 나에게 물어보겠다.
+                    .then(response => response.json())
+                    .then(data => {
+                        // console.log(data);
+                        const result = document.getElementById('result');
+                        result.innerHTML = JSON.stringify(data);
+                        // result.innerHTML = `
+                        //     <p><strong>${data[0].title}</strong></p>
+                        //     <p>${data[0].body}</p>
+                        // `;
+                    });
+            });
+        }
+        async function asyncawaitStyle() {
+            loadButton.addEventListener('click', async () => {
+                // try catch 는 알아서 추가..
+
+                const inputValue = document.getElementById('postId').value;
+
+                const response = await fetch(`/api/posts/${inputValue}`);
+                const data = await response.json();
+                const result = document.getElementById('result');
+                result.innerHTML = JSON.stringify(data);
+            });
+        }
+        // originalStyle();
+        asyncawaitStyle();
+
+        /*******************************************************************/
+        /* 여기 위에는 fetch 와 async await 를 학습하기 위한 코드였음       */
+        /* 여기 아래는 CRUD를 하기 위한 코드임.                             */
+        /*******************************************************************/
+        deleteButton.addEventListener('click', async () => {
+            // console.log('삭제버튼 눌렸으니, 삭제하는거 여기에다가 구현해야지...')
+            const inputValue = document.getElementById('postId').value;
+
+            const response = await fetch(`/api/posts/${inputValue}`, {
+                method: 'DELETE'
+            });
+            const data = await response.json();
+            const result = document.getElementById('result');
+            result.innerHTML = JSON.stringify(data);
+        });
+        
+    </script>
+</body>
+</html>
