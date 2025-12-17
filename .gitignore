@@ -8,3 +8,8 @@
 
 # node 모듈들 제외
 node_modules/
+
+# 각종 db파일들
+*.db
+*.sqlite
+*.sqlite3
