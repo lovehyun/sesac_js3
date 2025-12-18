@@ -32,7 +32,7 @@ app.delete('/api/delete', (req, res) => {
     res.send('글 삭제');
 });
 
-app.modify('/api/modify', (req, res) => {
+app.put('/api/modify', (req, res) => {
     console.log('글 수정');
     // 비즈로직 구현
     res.send('글 수정');
