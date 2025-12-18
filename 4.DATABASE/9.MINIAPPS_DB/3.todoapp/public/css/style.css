@@ -1,0 +1,8 @@
+#todo-list li {
+    cursor:pointer;
+}
+
+#todo-list li.completed {
+    text-decoration: line-through;
+    color: rgb(147, 147, 147);
+}
