@@ -6,8 +6,8 @@ async function do_db_working() {
     console.log('테이블이 성공적으로 생성되었습니다.');
 
     // 데이터 삽입
-    await runQuery("INSERT INTO users VALUES ('id001', 'user1')");
-    console.log('데이터 삽입이 성공했습니다.');
+    const result = await runQuery("INSERT INTO users VALUES ('id001', 'user1')");
+    console.log('데이터 삽입이 성공했습니다. 결과ID: ', result.lastID);
 
     // 데이터 조회
     const rows = await allQuery("SELECT * FROM users");

@@ -14,7 +14,9 @@ app.use(express.json());
 
 function init_database() {
     const sql = fs.readFileSync('init_database.sql', 'utf8'); // sync라서 동기 모드로 읽힘 (즉 블럭킹 함수)
-    const statements = sql.split(';');
+    // const statements = sql.split(';').filter(x => Boolean(x));
+    // const statements = sql.split(';').filter(Boolean);
+    const statements = sql.split(';').map(s => s.trim()).filter(s => s.length > 0);
     try {
         for (const statement of statements) {
             // console.log(statement);
