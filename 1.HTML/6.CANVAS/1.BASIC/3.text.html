@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="400" height="200"></canvas>
+    <script>
+        // const canvas = document.getElementById('myCanvas');
+        // const context = canvas.getContext('2d'); 
+
+        const context = document.getElementById('myCanvas').getContext('2d'); 
+
+        context.font = '30px Arial';
+        context.fillStyle = '#0095DD'; // 아무 숫자나...
+        context.fillText('Hello, Canvas!', 50, 100); // (글자, x, y)
+        context.strokeText('Hello, Canvas!', 50, 150); // (글자, x, y)
+
+        context.font = 'italic 40px Times New Roman';
+        context.fillStyle = 'red';
+        context.fillText('Styled Text', 50, 50);
+    </script>
+</body>
+</html>
