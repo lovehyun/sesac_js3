@@ -17,6 +17,8 @@ async function renderApp() {
     if (route === "items" && id) return await viewItemDetail(id);
     if (route === "stores" && id) return await viewStoreDetail(id);
 
+    if (route === "dashboard") return await viewDashboard(AppState);
+
     AppState.detail_page = 1;
 
     if (route === "users") return await viewUsersList(AppState);

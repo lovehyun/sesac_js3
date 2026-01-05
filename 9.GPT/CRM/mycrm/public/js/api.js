@@ -19,3 +19,20 @@ async function apiGetJson(path, params = null) {
 function apiList(endpoint, page, size) {
   return apiGetJson(`/api${endpoint}`, { page, size });
 }
+
+async function apiPostJson(path, body) {
+  const res = await fetch(path, {
+    method: "POST",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body ?? {}),
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`API Error ${res.status}: ${text}`);
+  }
+  return res.json();
+}

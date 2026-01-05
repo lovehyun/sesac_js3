@@ -33,5 +33,6 @@ CREATE TABLE IF NOT EXISTS items (
 CREATE TABLE IF NOT EXISTS order_items (
   Id TEXT,
   OrderId TEXT,
-  ItemId TEXT
+  ItemId TEXT,
+  Qty INTEGER DEFAULT 1
 );

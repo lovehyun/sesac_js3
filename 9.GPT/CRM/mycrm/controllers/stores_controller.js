@@ -45,8 +45,8 @@ async function store_monthly_sales(req, res, next) {
     const rows = await all(
       `SELECT
           strftime('%Y-%m', o.OrderAt) AS month,
-          SUM(i.UnitPrice) AS revenue,
-          COUNT(*) AS count
+          SUM(i.UnitPrice * COALESCE(oi.Qty, 1)) AS revenue,
+          SUM(COALESCE(oi.Qty, 1)) AS count
        FROM orders o
        JOIN order_items oi ON oi.OrderId = o.Id
        JOIN items i ON i.Id = oi.ItemId

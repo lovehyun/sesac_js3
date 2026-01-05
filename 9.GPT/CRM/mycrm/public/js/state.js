@@ -1,12 +1,12 @@
 const AppState = {
-  table: "users",
+  table: "dashboard",
   page: 1,
-  size: DEFAULT_PAGE_SIZE,
+  size: 20,
 };
 
 function setTable(table) {
   AppState.table = table;
-  AppState.page = 1;
+  AppState.page = 1; // 테이블 바꾸면 1페이지로
 }
 
 function setPage(page) {

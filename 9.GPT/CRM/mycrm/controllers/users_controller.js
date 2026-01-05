@@ -44,6 +44,8 @@ async function list_user_orderitems(req, res, next) {
           oi.ItemId AS item_id,
           i.Name AS item_name,
           i.UnitPrice AS unit_price,
+          COALESCE(oi.Qty, 1) AS qty,
+          (i.UnitPrice * COALESCE(oi.Qty, 1)) AS line_total,
           o.StoreId AS store_id
        FROM order_items oi
        JOIN orders o ON o.Id = oi.OrderId
@@ -87,7 +89,7 @@ async function top_user_items(req, res, next) {
     const rows = await all(
       `SELECT 
           i.Name AS item_name,
-          COUNT(*) AS order_count
+          SUM(COALESCE(oi.Qty, 1)) AS order_count
        FROM order_items oi
        JOIN orders o ON o.Id = oi.OrderId
        JOIN items i ON i.Id = oi.ItemId
@@ -103,8 +105,31 @@ async function top_user_items(req, res, next) {
   }
 }
 
+// Kiosk용: 사용자 검색 (이름/ID 부분 일치)
+// GET /api/users/search?q=...
+async function search_users(req, res, next) {
+  try {
+    const q = String(req.query.q ?? "").trim();
+    if (!q) return res.json({ data: [] });
+
+    const like = `%${q}%`;
+    const rows = await all(
+      `SELECT Id, Name, Gender, Age
+       FROM users
+       WHERE Name LIKE ? OR Id LIKE ?
+       ORDER BY Name
+       LIMIT 20`,
+      [like, like]
+    );
+    res.json({ data: rows });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   list_users,
+  search_users,
   get_user,
   list_user_orderitems,
   top_user_stores,
