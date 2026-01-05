@@ -21,6 +21,37 @@ function formatWon(n) {
   return num.toLocaleString("ko-KR");
 }
 
+// 카드뷰에 보여줄 아이템 사진 URL (로컬 에셋 사용)
+// - 외부 이미지 의존성을 없애서(오프라인/차단 환경에서도) 항상 보이게 합니다.
+// - items seed의 Id(I001~)에 맞춰 public/assets/items/{Id}.png를 제공합니다.
+function getItemImageUrl(it) {
+  const name = String(it?.name ?? it?.Name ?? "").toLowerCase();
+  const type = String(it?.type ?? it?.Type ?? "").toLowerCase();
+
+  const n = name.replace(/[^a-z0-9]+/g, " ").trim();
+
+  // exact / keyword matches first
+  if (n.includes("americano")) return "/assets/items/americano.png";
+  if (n.includes("espresso")) return "/assets/items/espresso.png";
+  if (n.includes("cappuccino")) return "/assets/items/cappuccino.png";
+  if (n.includes("mocha")) return "/assets/items/mocha.png";
+
+  if (n.includes("strawberry")) return "/assets/items/strawberry_cake.png";
+  if (n.includes("vanilla")) return "/assets/items/vanilla_cake.png";
+  if (n.includes("red velvet") || n.includes("redvelvet")) return "/assets/items/red_velvet_cake.png";
+
+  if (n.includes("watermelon")) return "/assets/items/watermelon_juice.png";
+  if (n.includes("pineapple")) return "/assets/items/pineapple_juice.png";
+
+  // fallback by category
+  if (type === "coffee" || n.includes("coffee")) return "/assets/items/coffee.png";
+  if (type === "cake" || n.includes("cake")) return "/assets/items/cake.png";
+  if (type === "juice" || n.includes("juice")) return "/assets/items/juice.png";
+
+  return "/assets/items/default.png";
+}
+
+
 async function viewDashboard(state) {
   setText("page-title", "Dashboard");
   setText("breadcrumb", "Kiosk 주문 데모");
@@ -208,6 +239,14 @@ async function viewDashboard(state) {
 
     col.innerHTML = `
       <div class="card h-100 shadow-sm">
+        <img
+          src="${getItemImageUrl(it)}"
+          onerror="this.onerror=null;this.src='/assets/items/default.png';"
+          class="card-img-top"
+          alt="${escapeHtml(it.Name)}"
+          loading="lazy"
+          style="height: 160px; object-fit: cover;"
+        />
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-start">
             <div>

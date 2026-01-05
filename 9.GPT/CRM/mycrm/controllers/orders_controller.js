@@ -1,9 +1,10 @@
 const { all, get, run, exec } = require("../database/db");
+const crypto = require("crypto");
 const { listTable } = require("../utils/list_controller");
 
-function makeId(prefix) {
-  // 교육용: 충돌 확률이 매우 낮은 간단 ID
-  return `${prefix}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`.toUpperCase();
+function makeUuid(prefix) {
+  // Node.js 내장 UUID (v4). 예: O<uuid>, OI<uuid>
+  return `${prefix}${crypto.randomUUID()}`;
 }
 
 async function list_orders(req, res, next) {
@@ -82,7 +83,7 @@ async function create_order(req, res, next) {
       return res.status(400).json({ message: "No valid items" });
     }
 
-    const orderId = makeId("O");
+    const orderId = makeUuid("O");
     const nowIso = new Date().toISOString();
 
     await exec("BEGIN TRANSACTION");
@@ -93,7 +94,7 @@ async function create_order(req, res, next) {
       );
 
       for (let i = 0; i < normalized.length; i++) {
-        const oiId = makeId("OI");
+        const oiId = makeUuid("OI");
         await run(
           "INSERT INTO order_items (Id, OrderId, ItemId, Qty) VALUES (?, ?, ?, ?)",
           [oiId, orderId, normalized[i].itemId, normalized[i].qty]
