@@ -1,0 +1,11 @@
+html, body { height: 100%; }
+.sticky-footer{
+  position: sticky;
+  bottom: 0;
+  z-index: 1020;
+}
+.code-badge {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.85em;
+}
+canvas { max-height: 340px; }
