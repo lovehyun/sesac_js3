@@ -1,9 +1,19 @@
 const express = require('express');
 const session = require('express-session');
+const sqlite3 = require('sqlite3').verbose(); 
 const path = require('path');
 
 const app = express();
 const port = 3000;
+
+// db에 연결
+const db = new sqlite3.Database('users.db', (err) => {
+    if (err) {
+        console.error('DB 연결 실패:', err.message);
+    } else {
+        console.log('DB 연결 성공');
+    }
+})
 
 app.use(express.json());
 // app.use(express.urlencoded({extended: false}));
@@ -19,11 +29,6 @@ app.use(session({
 
 app.use(express.static('public'));
 
-// 간단한 메모리 기반의 사용자DB
-const users = [
-    {id: 1, username: 'user1', password: 'password1'},
-    {id: 2, username: 'user2', password: 'password2'}
-];
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
@@ -50,25 +55,20 @@ app.post('/login', (req, res) => {
     const { username, password } = req.body;
     console.log(`사용자 입력값 확인: ${username}, ${password}`);
 
-    // 사용자 로그인 확인 하는 코드 구현 - legacy
-    // let user = null;
-    // for (let i = 0; i < users.length; i++) {
-    //     if (users[i].username == username && users[i].password == password) {
-    //         user = users[i];
-    //         break;
-    //     }
-    // }
+    const query = 'SELECT * FROM users WHERE username = ? AND password = ?';
+    db.get(query, [username, password], (err, row) => {
+        if (err) {
+            console.error("DB 쿼리 오류:", err.message);
+            res.status(500).json({ message: '서버 오류' });
+        }
 
-    // 사용자 로그인 확인 하는 코드 구현 - modern
-    // https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/find
-    const user = users.find((u) => u.username === username && u.password === password);
-
-    if (user) {
-        req.session.user = { id: user.id, username: user.username }; // 내가 원하는 내용을 세션에 담기
-        res.json({ message: '로그인 성공'});
-    } else {
-        res.status(401).json({ message: '로그인 실패'});
-    }
+        if (row) {
+            req.session.user = { id: row.id, username: row.username };
+            res.json({ message: '로그인 성공'});
+        } else {
+            res.status(401).json({ message: '로그인 실패 (id/pw를 확인해 주세요)'});
+        }
+    })
 });
 
 app.get('/logout', (req, res) => {
