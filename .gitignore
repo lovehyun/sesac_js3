@@ -13,3 +13,7 @@ node_modules/
 *.db
 *.sqlite
 *.sqlite3
+
+# React의 build 와 dist 제외
+build/
+dist/
