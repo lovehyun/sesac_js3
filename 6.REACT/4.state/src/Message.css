@@ -1,0 +1,8 @@
+.message {
+    background-color: gray;
+    color: rgb(251, 0, 251);
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+}
