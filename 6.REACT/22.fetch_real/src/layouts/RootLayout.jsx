@@ -17,6 +17,9 @@ export default function RootLayout() {
                 <NavLink to="/users" style={linkStyle}>
                     Users
                 </NavLink>
+                <NavLink to="/posts" style={linkStyle}>
+                    Posts
+                </NavLink>
                 <NavLink to="/about" style={linkStyle}>
                     About
                 </NavLink>

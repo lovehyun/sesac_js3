@@ -18,3 +18,17 @@ export async function fetchUsers() {
 export async function fetchUserById(userId) {
     return requestJson(`${BASE_URL}/users/${userId}`);
 }
+
+export async function deleteUserById(userId) {
+    const res = await fetch(`${BASE_URL}/users/${userId}`, {
+        method: 'DELETE',
+    });
+
+    if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+    }
+}
+
+export async function fetchPosts() {
+    return requestJson(`${BASE_URL}/posts`);
+}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-import { fetchUsers } from '../api/usersApi';
+import { fetchUsers, deleteUserById } from '../api/usersApi';
 
 export default function Users() {
     const [users, setUsers] = useState([]);
@@ -28,13 +28,7 @@ export default function Users() {
 
         setDeletingId(id);
         try {
-            const res = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`, {
-                method: 'DELETE',
-            });
-
-            if (!res.ok) {
-                throw new Error(`HTTP ${res.status}`)
-            }
+            await deleteUserById(id);
             
             // 성공메시지가 오면??
             setUsers((prev) => prev.filter((u) => u.id !== id));

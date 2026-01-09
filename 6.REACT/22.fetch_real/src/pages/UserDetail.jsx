@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 
-import { fetchUserById } from '../api/usersApi';
+import { fetchUserById, deleteUserById } from '../api/usersApi';
 
 export default function UserDetail() {
     const { userId } = useParams();
@@ -10,6 +10,7 @@ export default function UserDetail() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState('');
+    const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
         fetchUserById(userId)
@@ -23,6 +24,22 @@ export default function UserDetail() {
             })
     }, [userId]); // userId 가 바뀔때마다 새로 fetch 해오기
                   // 그러나, 지금은 어차피 이 페이지가 불릴때마다 userId가 바뀌어서 올거라서 무방함.
+
+    async function deleteMe() {
+        if (deleting) return; // 삭제 중일때 또 클릭 못하게 함.
+
+        setDeleting(true);
+
+        try {
+            await deleteUserById(userId);
+            navigate('/users'); // 삭제후 목록 페이지로 이동
+        } catch (err) {
+            alert(err.message || '삭제에 실패했습니다.');
+        } finally {
+            setDeleting(false);
+        }
+
+    }
 
     /* 아래는 DOM 랜더링 코드만 추가할것 */
     if (loading) return <p>로딩 중...</p>
@@ -55,6 +72,10 @@ export default function UserDetail() {
             <div style={{ marginTop: 12, display: 'flex', gap: 8}}>
                 <button onClick={() => navigate(-1)}>뒤로</button>
                 <Link to="/users">목록으로</Link>
+
+                <button onClick={ deleteMe } disabled={deleting}>
+                    {deleting ? '삭제 중...' : '삭제'}
+                </button>
             </div>
         </div>
     )
