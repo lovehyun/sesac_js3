@@ -14,12 +14,17 @@ function App() {
             })
     }, []);
 
-    if (loading) return <p>로딩 중...</p>;
-
+    
     function removeUser(id) {
         setUsers((prev) => prev.filter((u) => u.id !== id));
     }
 
+    /**************************/
+    /* 아래는 DOM 랜더링 코드임 */
+    /**************************/
+
+    if (loading) return <p>로딩 중...</p>;
+    
     return (
         <>
             <h1>useEffect를 통한 외부 API 요청</h1>
