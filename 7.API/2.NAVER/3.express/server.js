@@ -6,6 +6,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
+import cors from 'cors';
 
 dotenv.config({ quiet: true });
 
@@ -22,6 +23,10 @@ const app = express();
 
 app.use(express.static('public'));
 app.use(morgan('dev'));
+// app.use(cors()); // cors({ origin: '*' });
+// app.use(cors({
+//     origin: ['http://127.0.0.1:5173', 'http://localhost:5173']
+// }));
 
 // --> 이전 코드 복붙 및 간소화
 const BASE_URL = `https://openapi.naver.com/v1/search/blog`

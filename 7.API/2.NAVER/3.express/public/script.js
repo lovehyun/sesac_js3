@@ -31,6 +31,7 @@ function renderResults(data) {
         data.items.forEach((item) => {
             console.log(item);
             const li = document.createElement('li');
+            // li.innerText = `
             li.innerHTML = `
                 <h3><a href="${item.link}" target="_blank">${item.title}</h3></a>
                 <p>${item.description}</p>
