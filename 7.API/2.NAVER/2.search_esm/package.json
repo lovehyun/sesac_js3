@@ -1,0 +1,16 @@
+{
+  "type": "module",
+  "name": "2.search_esm",
+  "version": "1.0.0",
+  "main": "3.fetch_esm.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.2.3"
+  }
+}
