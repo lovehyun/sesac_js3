@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map { height: 480px; }
+        .marker-label {
+            background-color: transparent;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([37.5665, 126.9780], 11);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', 
+            {}).addTo(map);
+
+        function calculateMarkerRadius(population) {
+            // 최소/최대 반지름
+            let minRadius = 20;
+            let maxRadius = 80;
+
+            let minPop = 100_000;
+            let maxPop = 1_000_000;
+
+            let radius = minRadius + ((population - minPop) / (maxPop - minPop)) * (maxRadius - minRadius);
+
+            return radius;
+        }
+
+        // 인구수 → 구를 대충 커버하는 실제 반경(m) 계산
+        function calculateCircleRadiusMeters(population) {
+            // 서울 평균 인구밀도 대략값 (명/km^2) - 필요하면 조정해서 튜닝하세요
+            const density = 20000; // 2만 명 / km² 가정
+
+            // r(km) = sqrt(pop / (π * density))
+            const rKm = Math.sqrt(population / (Math.PI * density));
+
+            // km → m 로 변환
+            const rMeters = rKm * 1000;
+
+            return rMeters;
+        }
+
+        fetch('/api/seoul')
+            .then(resp => resp.json())
+            .then(data => {
+                // console.log(data);
+                for (let i = 0; i < data.length; i++) {
+                    let pop = parseInt(data[i].population);
+                    let radius = calculateMarkerRadius(pop); // 인구수에 따라서 적정하게 변경
+
+                    let marker = L.circleMarker([data[i].lat, data[i].lng], {
+                        radius: radius,
+                        fillColor: 'red',
+                        color: 'red',
+                        weight: 1,
+                        fillOpacity: 0.5
+                    }).addTo(map);
+
+                    marker.bindTooltip(data[i].district, {
+                        permanent: true,
+                        direction: 'center',
+                        className: 'marker-label'
+                    });
+
+                    marker.bindPopup(`<b>${data[i].district}</b><br>인구: ${data[i].population}`);
+                }
+            })
+
+    </script>
+</body>
+</html>
