@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map { height: 480px; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        let map = L.map('map').setView([37.5665, 126.9780], 12);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+
+        // 서울 관광지 명소
+        let touristSpots = [
+            { name: '경복궁', location: [37.578, 126.977] },
+            { name: '명동', location: [37.5635, 126.981] },
+            { name: '남산 타워', location: [37.5515, 126.988] }
+
+            // https://www.findlatlng.org/
+        ]
+
+        let touristSpots2 = [
+            {
+                name: '경복궁',
+                location: [37.5780, 126.9770],
+                description: '조선 시대 법궁으로 서울을 대표하는 고궁.',
+                imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Seoul_Gyeongbokgung_palace_exterior_view.jpg'
+            },
+            {
+                name: '명동',
+                location: [37.5635, 126.9810],
+                description: '쇼핑과 길거리 음식으로 유명한 서울 대표 번화가.',
+                imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Myeong-dong_street_by_night.JPG'
+            },
+            {
+                name: '남산 타워',
+                location: [37.5515, 126.9880],
+                description: '서울 전경을 한눈에 볼 수 있는 전망 타워.',
+                imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/N_Seoul_Tower_(22574508070).jpg'
+            },
+            {
+                name: '북촌 한옥마을',
+                location: [37.5826, 126.9830],
+                description: '전통 한옥이 밀집한 서울의 대표 한옥 마을.',
+                imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Bukchon_Hanok_Village.jpg'
+            },
+            {
+                name: '홍대 거리',
+                location: [37.5563, 126.9220],
+                description: '거리 공연과 개성 있는 가게들로 가득한 젊음의 거리.',
+                imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Hongdae_Streets.jpg'
+            },
+            {
+                name: '동대문 디자인 플라자(DDP)',
+                location: [37.5665, 127.0090],
+                description: '자하 하디드가 설계한 미래형 복합 문화 공간.',
+                imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Dongdaemun_Design_Plaza_grass.jpg'
+            },
+            {
+                name: '롯데월드타워',
+                location: [37.5133, 127.1029],
+                description: '123층 초고층 빌딩으로 서울 스카이라인의 상징.',
+                imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Lotte_World_Tower_12_(32750043913).jpg'
+            },
+            {
+                name: '잠실 종합운동장',
+                location: [37.5153, 127.0732],
+                description: '각종 스포츠 경기와 공연이 열리는 대형 종합 경기장.',
+                imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Jamsil_Sports_Complex_20060611.jpg'
+            },
+            {
+                name: '청계천',
+                location: [37.5702, 126.9920],
+                description: '도심 속에 복원된 하천으로 야경이 아름다운 산책 코스.',
+                imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Seoul_Cheonggyecheon_at_night.jpg'
+            },
+            {
+                name: '여의도 한강공원',
+                location: [37.5286, 126.9326],
+                description: '피크닉과 야경 감상에 인기 있는 대표 한강공원.',
+                imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Yeouido_Hangang_Park_from_Mapo_Bridge_1.jpg'
+            }
+        ];
+
+        // ===============================
+        // 1) 이미지 미리 로딩 (preload)
+        // ===============================
+        touristSpots2.forEach(spot => {
+            let img = new Image();
+            img.src = spot.imageUrl;
+
+            // spot 객체 안에 저장해두기
+            spot.preloadedImage = img;
+
+            img.onload = () => {
+                spot.isLoaded = true;
+            };
+        });
+
+        // ===============================
+        // 2) 마커 + 클릭 시 미리 로드된 이미지로 팝업 즉시 표시
+        // ===============================
+        touristSpots2.forEach((spot) => {
+            let marker = L.marker(spot.location).addTo(map);
+
+            marker.on('click', () => {
+
+                // 아직 로딩 안됐으면 "로딩 중" 메시지를 잠깐 띄움
+                if (!spot.isLoaded) {
+                    let loadingPopup = L.popup()
+                        .setLatLng(spot.location)
+                        .setContent(`<p>이미지 로딩 중...</p>`)
+                        .openOn(map);
+                }
+
+                // 로딩 완료될 때까지 대기 (폴링 방식)
+                let waitInterval = setInterval(() => {
+                    if (spot.isLoaded) {
+                        clearInterval(waitInterval);
+
+                        let popupContent = `
+                            <div>
+                                <h3>${spot.name}</h3>
+                                <p>${spot.description}</p>
+                                <img src="${spot.imageUrl}" style="width: 100%">
+                            </div>
+                        `;
+                        L.popup()
+                            .setLatLng(spot.location)
+                            .setContent(popupContent)
+                            .openOn(map);
+                    }
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>

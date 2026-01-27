@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- 브라우저 기능통해 나의 위치를 가져다가 매핑할수 있는 플러그인 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
+    <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        #map { height: 480px; }
+        /* 기본 버튼 스타일 */
+        .leaflet-control-locate a {
+            background: #2c3e50;   /* 버튼 배경색 */
+            color: #ffffff;        /* 아이콘 색 */
+            border-radius: 4px;    /* 살짝 둥글게 */
+        }
+
+        /* hover 시 */
+        .leaflet-control-locate a:hover {
+            background: #34495e;
+        }
+
+        /* 클릭(활성) 상태 */
+        .leaflet-control-locate.active a {
+            background: #e74c3c;   /* 활성화되면 빨간톤으로 */
+            color: #ffffff;
+        }
+
+        /* 비활성/에러 상태 등 필요하면 상태별로 더 나눌 수 있음 */
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        var map = L.map('map').setView([37.5665, 126.9780], 13);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', 
+            {}).addTo(map);
+
+        L.control.locate({
+            position: 'bottomleft', // 왼쪽 아래 내 위치 버튼 추가
+            flyTo: true,
+            setView: 'once', // 위치를 찾으면 지도 한번 이동
+            // icon: 'fa fa-bullseye', // 과녁 아이콘으로 바꾸기 (fontawesome 사용)
+            icon: 'fa fa-location-arrow',      // 아이콘 변경
+            iconLoading: 'fa fa-spinner fa-pulse', // 찾는 중일 때 로딩 아이콘
+            strings: {
+                title: '내 위치 찾기'  // 버튼 툴팁
+            }
+        }).addTo(map);
+    </script>
+</body>
+</html>

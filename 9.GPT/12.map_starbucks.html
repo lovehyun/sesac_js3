@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>스타벅스 매장 경로 플래너</title>
+
+    <!-- Leaflet 기본 CSS/JS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Leaflet Routing Machine CSS/JS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"
+    />
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+            sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            padding: 12px 16px;
+            background: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+        }
+        h1 {
+            font-size: 1.2rem;
+            margin: 0 0 4px;
+        }
+        .subtitle {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .layout {
+            display: flex;
+            flex-wrap: wrap;
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar {
+            flex: 0 0 320px;
+            max-width: 400px;
+            border-right: 1px solid #ddd;
+            padding: 12px;
+            font-size: 0.9rem;
+        }
+
+        .sidebar h2 {
+            font-size: 1rem;
+            margin: 0 0 8px;
+        }
+
+        .store-list {
+            max-height: 220px;
+            overflow-y: auto;
+            margin-bottom: 8px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 6px;
+        }
+
+        .store-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            margin-bottom: 6px;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .store-item:hover {
+            background: #f8f9fa;
+        }
+
+        .store-item input[type="checkbox"] {
+            margin-top: 3px;
+        }
+
+        .store-name {
+            font-weight: 600;
+        }
+
+        .store-addr {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .selection-summary {
+            margin-bottom: 8px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 6px;
+            background: #fafafa;
+        }
+        .selection-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .selection-list {
+            font-size: 0.8rem;
+            white-space: pre-line;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .btn {
+            padding: 6px 10px;
+            font-size: 0.85rem;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background: #fff;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: #007bff;
+            border-color: #007bff;
+            color: #fff;
+        }
+        .btn-secondary {
+            background: #e9ecef;
+        }
+
+        .status {
+            font-size: 0.8rem;
+            color: #666;
+            min-height: 18px;
+            margin-bottom: 4px;
+        }
+
+        .route-info {
+            font-size: 0.8rem;
+            color: #333;
+            white-space: pre-line;
+            border-top: 1px solid #eee;
+            padding-top: 4px;
+            margin-top: 4px;
+        }
+
+        .map-container {
+            flex: 1 1 0;
+            min-width: 260px;
+            height: 520px;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 경로 순번 마커 스타일 */
+        .route-index {
+            background: #ff6b6b;
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            border: 2px solid #fff;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+            line-height: 24px;
+            width: 24px;
+            height: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .layout {
+                flex-direction: column;
+            }
+            .sidebar {
+                max-width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+            }
+            .map-container {
+                height: calc(100vh - 340px);
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>서울 스타벅스 경로 플래너</h1>
+    <div class="subtitle">
+        10개 매장 중 원하는 곳을 선택하고, 선택 순서대로 또는 최단 거리 경로를 비교해보세요.
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h2>매장 선택</h2>
+        <div class="store-list" id="store-list"></div>
+
+        <div class="selection-summary">
+            <div class="selection-title">현재 선택 순서</div>
+            <div id="selected-order" class="selection-list">
+                선택된 매장이 없습니다.
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-secondary" id="clear-btn">선택 해제</button>
+            <button class="btn btn-primary" id="order-route-btn">선택 순서대로 경로</button>
+            <button class="btn btn-primary" id="shortest-route-btn">최단 거리 경로</button>
+        </div>
+
+        <div class="status" id="status"></div>
+        <div class="route-info" id="route-info"></div>
+    </aside>
+
+    <section class="map-container">
+        <div id="map"></div>
+    </section>
+</div>
+
+<script>
+    // ===== 1. 스타벅스 매장 데이터 =====
+    const stores = [
+        {
+            id: 1,
+            name: "스타벅스 서울광장점",
+            address: "서울 중구 을지로 12",
+            lat: 37.5668,
+            lng: 126.9786,
+        },
+        {
+            id: 2,
+            name: "스타벅스 명동역점",
+            address: "서울 중구 퇴계로 123",
+            lat: 37.5610,
+            lng: 126.9825,
+        },
+        {
+            id: 3,
+            name: "스타벅스 강남역점",
+            address: "서울 강남구 강남대로 390",
+            lat: 37.4980,
+            lng: 127.0276,
+        },
+        {
+            id: 4,
+            name: "스타벅스 신촌역점",
+            address: "서울 서대문구 연세로 10",
+            lat: 37.5598,
+            lng: 126.9368,
+        },
+        {
+            id: 5,
+            name: "스타벅스 홍대입구역점",
+            address: "서울 마포구 양화로 160",
+            lat: 37.5572,
+            lng: 126.9238,
+        },
+        {
+            id: 6,
+            name: "스타벅스 잠실역점",
+            address: "서울 송파구 올림픽로 265",
+            lat: 37.5130,
+            lng: 127.1002,
+        },
+        {
+            id: 7,
+            name: "스타벅스 건대입구점",
+            address: "서울 광진구 능동로 92",
+            lat: 37.5404,
+            lng: 127.0692,
+        },
+        {
+            id: 8,
+            name: "스타벅스 시청역점",
+            address: "서울 중구 세종대로 110",
+            lat: 37.5659,
+            lng: 126.9770,
+        },
+        {
+            id: 9,
+            name: "스타벅스 서울역점",
+            address: "서울 용산구 한강대로 405",
+            lat: 37.5551,
+            lng: 126.9707,
+        },
+        {
+            id: 10,
+            name: "스타벅스 압구정로데오점",
+            address: "서울 강남구 언주로 872",
+            lat: 37.5273,
+            lng: 127.0400,
+        },
+    ];
+
+    // ===== 2. DOM 요소 =====
+    const storeListEl = document.getElementById("store-list");
+    const selectedOrderEl = document.getElementById("selected-order");
+    const statusEl = document.getElementById("status");
+    const routeInfoEl = document.getElementById("route-info");
+    const clearBtn = document.getElementById("clear-btn");
+    const orderRouteBtn = document.getElementById("order-route-btn");
+    const shortestRouteBtn = document.getElementById("shortest-route-btn");
+
+    // 선택 순서를 기록하기 위한 카운터
+    let selectionCounter = 0;
+
+    // ===== 3. 매장 리스트 렌더링 =====
+    function renderStoreList() {
+        storeListEl.innerHTML = "";
+        stores.forEach((store) => {
+            const item = document.createElement("div");
+            item.className = "store-item";
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.className = "store-checkbox";
+            checkbox.dataset.storeId = store.id;
+
+            // 체크/언체크 시 선택 순서 기록 + 요약 목록 갱신
+            checkbox.addEventListener("change", () => {
+                if (checkbox.checked) {
+                    if (!checkbox.dataset.selectedOrder) {
+                        checkbox.dataset.selectedOrder = ++selectionCounter;
+                    }
+                } else {
+                    delete checkbox.dataset.selectedOrder;
+                }
+                updateSelectedSummary();
+            });
+
+            const info = document.createElement("div");
+            const nameEl = document.createElement("div");
+            nameEl.className = "store-name";
+            nameEl.textContent = store.name;
+
+            const addrEl = document.createElement("div");
+            addrEl.className = "store-addr";
+            addrEl.textContent = store.address;
+
+            info.appendChild(nameEl);
+            info.appendChild(addrEl);
+
+            item.appendChild(checkbox);
+            item.appendChild(info);
+
+            storeListEl.appendChild(item);
+        });
+    }
+
+    renderStoreList();
+
+    // ===== 4. 지도 초기화 =====
+    const map = L.map("map").setView([37.56, 126.98], 12); // 서울 중심
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {}).addTo(map);
+
+    // 매장 기본 마커 표시 (전체 10개)
+    const storeMarkers = [];
+    stores.forEach((s) => {
+        const marker = L.marker([s.lat, s.lng]).addTo(map);
+        marker.bindPopup(`<b>${s.name}</b><br>${s.address}`);
+        storeMarkers.push(marker);
+    });
+
+    // 라우팅 컨트롤 및 경로용 마커 관리
+    let routingControl = null;
+    let routeMarkers = [];
+
+    // ===== 5. 선택된 매장 가져오기 (클릭 순서 기준) =====
+    function getSelectedStoresByClickOrder() {
+        const checkboxes = Array.from(
+            document.querySelectorAll(".store-checkbox")
+        ).filter((cb) => cb.checked);
+
+        if (checkboxes.length === 0) return [];
+
+        checkboxes.sort((a, b) => {
+            const orderA = parseInt(a.dataset.selectedOrder || "0", 10);
+            const orderB = parseInt(b.dataset.selectedOrder || "0", 10);
+            return orderA - orderB;
+        });
+
+        const selectedStores = checkboxes.map((cb) => {
+            const id = parseInt(cb.dataset.storeId, 10);
+            return stores.find((s) => s.id === id);
+        });
+
+        return selectedStores;
+    }
+
+    // ===== 6. 현재 선택 순서 요약 표시 =====
+    function updateSelectedSummary() {
+        const selectedStores = getSelectedStoresByClickOrder();
+        if (selectedStores.length === 0) {
+            selectedOrderEl.textContent = "선택된 매장이 없습니다.";
+            return;
+        }
+        const lines = selectedStores.map(
+            (s, idx) => `${idx + 1}. ${s.name}`
+        );
+        selectedOrderEl.textContent = lines.join("\n");
+    }
+
+    updateSelectedSummary();
+
+    // ===== 7. 이전 경로/마커 정리 =====
+    function clearRoute() {
+        if (routingControl) {
+            map.removeControl(routingControl);
+            routingControl = null;
+        }
+        routeMarkers.forEach((m) => map.removeLayer(m));
+        routeMarkers = [];
+    }
+
+    // 기본 매장 마커를 지도에 다시 추가
+    function showAllStoreMarkers() {
+        storeMarkers.forEach((m) => {
+            if (!map.hasLayer(m)) {
+                m.addTo(map);
+            }
+        });
+    }
+
+    // 기본 매장 마커를 모두 제거
+    function hideAllStoreMarkers() {
+        storeMarkers.forEach((m) => {
+            if (map.hasLayer(m)) {
+                map.removeLayer(m);
+            }
+        });
+    }
+
+    // ===== 8. 주어진 순서대로 경로 그리기 (콜백으로 후처리) =====
+    function drawRouteForStores(storeSequence, onDone) {
+        clearRoute();
+
+        if (storeSequence.length < 2) {
+            alert("최소 2개 이상의 매장을 선택해야 경로를 볼 수 있습니다.");
+            return;
+        }
+
+        // 🔴 경로 탐색 시: 기본 10개 매장 마커는 제거
+        hideAllStoreMarkers();
+
+        // 🔴 실제 이동 경로에 포함된 매장만 번호 마커로 표시 (고정)
+        storeSequence.forEach((s, idx) => {
+            const icon = L.divIcon({
+                className: "route-index",
+                html: String(idx + 1),
+                iconSize: [24, 24],
+                iconAnchor: [12, 12],
+            });
+
+            const marker = L.marker([s.lat, s.lng], { icon }).addTo(map);
+            marker.bindPopup(
+                `<b>${idx + 1}. ${s.name}</b><br>${s.address}`
+            );
+            routeMarkers.push(marker);
+        });
+
+        routingControl = L.Routing.control({
+            waypoints: storeSequence.map((s) => L.latLng(s.lat, s.lng)),
+            routeWhileDragging: false,
+            addWaypoints: false,
+            draggableWaypoints: false,
+            showAlternatives: false,
+            lineOptions: {
+                styles: [
+                    { color: "#3388ff", opacity: 0.8, weight: 4 }
+                ],
+            },
+        })
+            .on("routesfound", (e) => {
+                const route = e.routes[0];
+                if (route && route.bounds) {
+                    map.fitBounds(route.bounds, { padding: [40, 40] });
+                }
+                statusEl.textContent = "경로 계산 완료!";
+                if (onDone) onDone(route);
+            })
+            .addTo(map);
+    }
+
+    // ===== 9. 최단 거리 경로 계산 (TSP: 시작점은 첫 선택 고정) =====
+    function computeShortestPathOrder(selectedStores) {
+        const n = selectedStores.length;
+        if (n < 2) return selectedStores;
+
+        const points = selectedStores.map((s) => L.latLng(s.lat, s.lng));
+        const dist = Array.from({ length: n }, () => Array(n).fill(0));
+
+        for (let i = 0; i < n; i++) {
+            for (let j = i + 1; j < n; j++) {
+                const d = map.distance(points[i], points[j]);
+                dist[i][j] = d;
+                dist[j][i] = d;
+            }
+        }
+
+        const m = n - 1;
+        const size = 1 << m;
+        const INF = Number.POSITIVE_INFINITY;
+
+        const dp = Array.from({ length: size }, () =>
+            Array(n).fill(INF)
+        );
+        const parent = Array.from({ length: size }, () =>
+            Array(n).fill(-1)
+        );
+
+        for (let j = 1; j < n; j++) {
+            const mask = 1 << (j - 1);
+            dp[mask][j] = dist[0][j];
+            parent[mask][j] = 0;
+        }
+
+        for (let mask = 1; mask < size; mask++) {
+            for (let j = 1; j < n; j++) {
+                if (!(mask & (1 << (j - 1)))) continue;
+                const prevMask = mask ^ (1 << (j - 1));
+                if (prevMask === 0) continue;
+
+                for (let k = 1; k < n; k++) {
+                    if (!(prevMask & (1 << (k - 1)))) continue;
+                    const candidate = dp[prevMask][k] + dist[k][j];
+                    if (candidate < dp[mask][j]) {
+                        dp[mask][j] = candidate;
+                        parent[mask][j] = k;
+                    }
+                }
+            }
+        }
+
+        const fullMask = size - 1;
+        let bestCost = INF;
+        let endNode = -1;
+        for (let j = 1; j < n; j++) {
+            if (dp[fullMask][j] < bestCost) {
+                bestCost = dp[fullMask][j];
+                endNode = j;
+            }
+        }
+
+        const orderIndices = [];
+        let mask = fullMask;
+        let cur = endNode;
+        while (cur !== 0 && cur !== -1) {
+            orderIndices.push(cur);
+            const prev = parent[mask][cur];
+            mask = mask ^ (1 << (cur - 1));
+            cur = prev;
+        }
+        orderIndices.push(0);
+        orderIndices.reverse();
+
+        const orderedStores = orderIndices.map((idx) => selectedStores[idx]);
+        return orderedStores;
+    }
+
+    // ===== 10. 버튼 이벤트 =====
+
+    // 선택 해제
+    clearBtn.addEventListener("click", () => {
+        document
+            .querySelectorAll(".store-checkbox")
+            .forEach((cb) => {
+                cb.checked = false;
+                delete cb.dataset.selectedOrder;
+            });
+        selectionCounter = 0;
+        clearRoute();
+        updateSelectedSummary();
+        statusEl.textContent = "모든 선택을 해제했습니다.";
+        routeInfoEl.textContent = "";
+
+        // 🔄 전체 매장 기본 마커 다시 보여주기
+        showAllStoreMarkers();
+    });
+
+    // 선택 순서대로 경로
+    orderRouteBtn.addEventListener("click", () => {
+        const selectedStores = getSelectedStoresByClickOrder();
+        if (selectedStores.length < 2) {
+            alert("최소 2개 이상의 매장을 선택해주세요.");
+            return;
+        }
+        statusEl.textContent = "선택 순서대로 경로를 계산 중입니다...";
+        drawRouteForStores(selectedStores, () => {
+            const lines = selectedStores.map(
+                (s, idx) => `${idx + 1}. ${s.name}`
+            );
+            routeInfoEl.textContent =
+                "선택 순서대로 이동 경로:\n" + lines.join("\n");
+        });
+    });
+
+    // 최단 거리 경로
+    shortestRouteBtn.addEventListener("click", () => {
+        const selectedStores = getSelectedStoresByClickOrder();
+        if (selectedStores.length < 2) {
+            alert("최소 2개 이상의 매장을 선택해주세요.");
+            return;
+        }
+        statusEl.textContent = "최단 거리 경로를 계산 중입니다...";
+
+        const orderedStores = computeShortestPathOrder(selectedStores);
+        drawRouteForStores(orderedStores, () => {
+            const origLines = selectedStores.map(
+                (s, idx) => `${idx + 1}. ${s.name}`
+            );
+            const shortLines = orderedStores.map(
+                (s, idx) => `${idx + 1}. ${s.name}`
+            );
+            routeInfoEl.textContent =
+                "원래 선택 순서:\n" +
+                origLines.join("\n") +
+                "\n\n최단 거리 순서:\n" +
+                shortLines.join("\n");
+        });
+    });
+</script>
+</body>
+</html>
