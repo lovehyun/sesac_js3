@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        #messageContainer {
+            height: 200px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #inputMessage {
+            width: 300px;
+            padding: 5px;
+        }
+
+        .messageBubble {
+            max-width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+        }
+
+        .sentMessage {
+            text-align: right;
+            background-color: lightgreen;
+            color: black;
+            align-self: flex-end;
+            border-radius: 10px 10px 0px 10px;
+        }
+
+        .receivedMessage {
+            text-align: left;
+            margin-bottom: 10px;
+            background-color: lightblue;
+            color: black;
+            align-self: flex-start;
+            border-radius: 10px 10px 10px 0px;
+        }
+
+        .broadcastMessage {
+            text-align: center;
+            font-style: italic;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <h1>채팅앱</h1>
+    <div id="messageContainer"></div>
+    <input type="text" id="inputMessage" />
+    <button id="sendButton">전송</button>
+
+    <script>
+        const socket = new WebSocket(`ws://${window.location.host}/chat`);
+
+        let username; // 사용자 이름 입력받기
+
+        socket.addEventListener('open', (event) => {
+            username = prompt('이름을 입력하세요:');
+            socket.send(JSON.stringify({ type: 'session', username: username }));
+        });
+
+        socket.addEventListener('message', (event) => {
+            const message = JSON.parse(event.data);
+            console.log(message);
+            if (message.type === 'broadcast') {
+                displayBroadcastMessage(message);
+            } else {
+                displayMessage(message);
+            }
+        });
+
+        function displayBroadcastMessage(message) {
+            const messageContainer = document.getElementById('messageContainer');
+            const newMessage = document.createElement('div');
+
+            newMessage.textContent = `${message.content}`;
+
+            newMessage.classList.add('messageBubble');
+            newMessage.classList.add('broadcastMessage');
+
+            messageContainer.appendChild(newMessage);
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        function displayMessage(message) {
+            const messageContainer = document.getElementById('messageContainer');
+            const newMessage = document.createElement('div');
+            
+            newMessage.textContent = `${message.sender} : ${message.content}`;
+
+            newMessage.classList.add('messageBubble');
+            if (message.sender === 'me') {
+                newMessage.classList.add('sentMessage');
+            } else {
+                newMessage.classList.add('receivedMessage');
+            }
+            messageContainer.appendChild(newMessage);
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        // 전송 기능 구현
+        document.getElementById('sendButton').addEventListener('click', () => {
+            const inputMessage = document.getElementById('inputMessage');
+            const message = inputMessage.value;
+            inputMessage.value = '';
+            sendMessage(message);
+        });
+
+        function sendMessage(message) {
+            const messageObj = {
+                username: username,
+                content: message
+            };
+
+            socket.send(JSON.stringify(messageObj));
+        }
+    </script>
+</body>
+</html>

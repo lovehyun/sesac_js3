@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <h1>웹소켓 테스트</h1>
+    <input id="msg" type="text" placeholder="메시지 입력" />
+    <button onclick="send()">전송</button>
+    <script>
+        const socket = new WebSocket("ws://localhost:8000");
+
+        socket.onopen = () => {
+            console.log("서버와 연결됨");
+        }
+
+        socket.onmessage = (ev) => {
+            console.log("서버가 한말: ", ev.data)
+        }
+
+        function send() {
+            const msg = document.getElementById('msg').value;
+            // console.log(msg);
+            socket.send(msg);
+        }
+    </script>
+</body>
+</html>

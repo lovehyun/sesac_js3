@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <h1>웹소켓 테스트</h1>
+    <input id="msg" type="text" placeholder="메시지 입력" />
+    <button onclick="send()">전송</button>
+    <div id="log" style="margin-top: 20px; width: 400px; height: 200px; border: 1px solid gray; overflow-y: auto"></div>
+    <script>
+        const socket = new WebSocket("ws://localhost:8000");
+
+        socket.onopen = () => {
+            console.log("서버와 연결됨");
+        }
+
+        socket.onmessage = (ev) => {
+            console.log("서버가 한말: ", ev.data)
+            display(ev.data);
+        }
+
+        const logDiv = document.getElementById('log');
+
+        function display(message) {
+            const msg = JSON.parse(message);  // JSON 문자열로 온 서버의 메시지를 자료구조로 바꿈
+            console.log(msg);
+            if (msg.type == "system") return;
+            
+            const div = document.createElement('div');
+            div.textContent = msg.content;
+            console.log(msg.content);
+            logDiv.appendChild(div);
+        }
+
+        function send() {
+            const msg = document.getElementById('msg').value;
+            // console.log(msg);
+            // 문자열로 보내도 아무 상관은 없음.. 그러나 관리가 불펴함..
+            // 그래서,, JSON으로 포멧팅을 해서 보낸다..
+
+            const myMsg = {
+                type: "chat",
+                content: msg
+            }
+
+            socket.send(JSON.stringify(myMsg));
+        }
+    </script>
+</body>
+</html>
