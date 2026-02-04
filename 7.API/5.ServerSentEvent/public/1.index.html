@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Server Sent Event 인트로</h1>
+    <div id="output"><!--서버로부터받아온메시지를출력할곳--></div>
+
+    <script>
+        // 클라이언트는 서버에 이벤트 요청을 등록한다.
+        const evSource = new EventSource('http://localhost:3000/events');
+
+        const outputDiv = document.getElementById('output');
+        evSource.onmessage = (event) => {
+            console.log(event);
+            // outputDiv.textContent = `서버로부터 다시 온 메시지: ${event.data}`
+
+            const newMsg = document.createElement('p');
+            newMsg.textContent = `서버로부터 다시 온 메시지: ${event.data}`
+            outputDiv.appendChild(newMsg);
+        }
+
+        evSource.onerror = (error) => {
+            console.error('SSE 연결 오류:', error);
+            evSource.close(); // 재접속 안하도록 그냥 실패하면 중지
+        }
+    </script>
+</body>
+</html>
