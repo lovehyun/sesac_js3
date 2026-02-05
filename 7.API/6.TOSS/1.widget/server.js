@@ -9,6 +9,7 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// 최종 배포 코드일때는 이런거 커밋하지 말고, dotenv로 대체할것. 아래는 코드에서 시험용으로 만든 고용키임.
 const secretKey = 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
 
 app.post('/confirm', async (req, res) => {
