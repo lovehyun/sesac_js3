@@ -20,3 +20,6 @@ dist/
 
 # Crendentials
 .env
+
+# TS 개발 폴더에서 자동 생성된 js파일은 예외
+8.TS/**/*.js
