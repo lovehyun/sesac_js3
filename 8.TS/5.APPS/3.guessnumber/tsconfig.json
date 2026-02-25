@@ -1,0 +1,12 @@
+{
+  // Visit https://aka.ms/tsconfig to read more about this file
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "module": "nodenext",
+    "target": "ES2020", // JS 의 다양한 버전중 어떤 버전으로 빌드, ES5, ES6, ES2020, ES2024, 등등
+    "types": ["node"],
+    "strict": true,
+    "moduleDetection": "force",
+  }
+}

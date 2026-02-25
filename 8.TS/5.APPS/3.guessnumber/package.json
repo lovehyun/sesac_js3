@@ -1,0 +1,16 @@
+{
+  "name": "3.guessnumber",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node dist/guessNumber.js",
+    "dev": "ts-node src/guessNumber.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^25.3.0"
+  }
+}
